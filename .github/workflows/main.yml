@@ -2,7 +2,7 @@ name: Matrix Build with Artifacts
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
 
 jobs:
@@ -10,34 +10,26 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        node: [18, 20, 22]
-        # Three variants: combinations of OS and Node version
         include:
           - os: ubuntu-latest
-            node: 18
+            variant: node18
           - os: windows-latest
-            node: 20
+            variant: node20
           - os: macos-latest
-            node: 22
+            variant: node22
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-
-      - name: matrix-144f8e5 — Run build and create artifact
+      - name: matrix-144f8e5 — Build and create artifact
         run: |
-          echo "Building for OS=${{ matrix.os }}, Node=${{ matrix.node }}" > build-info.txt
-          echo "Timestamp: $(date)" >> build-info.txt
+          echo "Building for OS=${{ matrix.os }}, Variant=${{ matrix.variant }}" > build-info.txt
           echo "Matrix identifier: matrix-144f8e5" >> build-info.txt
+          echo "Timestamp: $(date)" >> build-info.txt
 
-      - name: Upload build artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-144f8e5-${{ matrix.os }}-node${{ matrix.node }}
+          name: build-144f8e5-${{ matrix.os }}-${{ matrix.variant }}
           path: build-info.txt
